@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Page</title>
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Import Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Function to fetch user data from Firestore
+    async function fetchUserData(uid) {
+      try {
+        const userDoc = doc(db, "users", uid); // Access user document in 'users' collection using their UID
+        const userSnapshot = await getDoc(userDoc);
+
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          // Update the profile page with the fetched user data
+          document.getElementById("userName").textContent = userData.username || "User";
+
+          // Check if profilePicURL exists and set it
+          const profilePicUrl = userData.profilePicURL || null;
+          if (profilePicUrl && profilePicUrl !== "null" && profilePicUrl !== "undefined") {
+            document.getElementById("profilePic").src = profilePicUrl;
+          } else {
+            // Fallback to a default image if no profile picture is found
+            document.getElementById("profilePic").src = "https://via.placeholder.com/60";
+          }
+
+          // Check if the verified field exists and set the icon
+          const verifiedIconUrl = userData.verified || null;
+          if (verifiedIconUrl) {
+            document.getElementById("verifiedIcon").src = verifiedIconUrl;
+            document.getElementById("verifiedIcon").style.display = "inline"; // Ensure the icon is displayed
+          } else {
+            document.getElementById("verifiedIcon").style.display = "none"; // Hide if not present
+          }
+
+          // Set the URL
+          const profileUrl = userData.profileUrl || "#";
+          document.getElementById("profileUrl").textContent = profileUrl;
+        } else {
+          console.log("User document not found in Firestore.");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+
+    // Check if user is logged in and fetch data
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Fetch user data using the logged-in user's UID
+        fetchUserData(user.uid);
+      } else {
+        console.log("No user is logged in.");
+        // Optionally, redirect the user to a login page if not logged in
+        window.location.href = "/login.html"; // Modify the URL as needed
+      }
+    });
+  </script>
+
+  <!-- Styles -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .header .user-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .header .user-info h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .header .user-info .verified {
+      display: flex;
+      align-items: center;
+    }
+
+    .header .user-info .verified img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-left: 10px;
+    }
+
+    .header .user-info img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+
+    .header .user-url {
+      font-size: 14px;
+      color: #007BFF;
+      text-decoration: none;
+    }
+
+    .options {
+      margin-top: 20px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      padding: 15px 0;
+      border-top: 1px solid #ddd;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .option:first-child {
+      border-top: none;
+    }
+
+    .option-icon {
+      font-size: 20px;
+      width: 30px;
+      color: #008080;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .option-details h3 {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .option-details p {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .option:hover {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header Section with Profile Picture, Name, and Status -->
+    <div class="header">
+      <div class="user-info">
+        <img id="profilePic" src="https://via.placeholder.com/60" alt="Profile Picture">
+        <div class="verified">
+          <h2 id="userName">User</h2>
+          <!-- Verified icon will appear here -->
+          <img id="verifiedIcon" src="" alt="Verified Icon" style="display:none;">
+        </div>
+      </div>
+      <div>
+        <a id="profileUrl" href="#" class="user-url" target="_blank">Profile URL</a>
+      </div>
+    </div>
+
+    <!-- Options List -->
+    <div class="options">
+      <a href="account.html" class="option">
+        <div class="option-icon">🔑</div>
+        <div class="option-details">
+          <h3>Account</h3>
+          <p>Security notifications, change email</p>
+        </div>
+      </a>
+      <a href="darkmode.html" class="option">
+        <div class="option-icon">🔑</div>
+        <div class="option-details">
+          <h3>Dark Mode</h3>
+          <p>enable dark mode</p>
+        </div>
+      </a>
+      
+    </div>
+  </div>
+
+</body>
+</html>

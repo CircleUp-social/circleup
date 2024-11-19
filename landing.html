@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CircleUp - Connect with Your Circles</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/index.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <header>
+    <nav class="navbar">
+      <div class="logo">CircleUp</div>
+      <div class="nav-links">
+        <a href="login.html" class="nav-button">Login</a>
+        <a href="signup.html" class="nav-button">Sign Up</a>
+        <a href="about.html" class="nav-button">About</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="main-section">
+    <div class="content">
+      <h1>Welcome to CircleUp</h1>
+      <p>Join your favorite Circles, share memories, and connect in new ways.</p>
+      <a href="signup.html" class="cta-button">Get Started</a>
+      <a href="blog.html" class="cta-button">Go to Blog</a>
+      <a href="monotization.html" class="cta-button">start Earning Now</a>
+    </div>
+    <div class="hero-image">
+      <img src="images/logo.png" alt="CircleUp Community">
+    </div>
+  </main>
+  <!-- Message Box -->
+<div id="messageBox" class="message-box">
+  <p>
+    By clicking **Continue**, you agree to our 
+    <a href="terms.html" target="_blank">Terms & Conditions</a> 
+    and 
+    <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.
+  </p>
+  <button id="continueBtn">Continue</button>
+</div>
+
+
+  <footer>
+    <p>&copy; 2024 CircleUp. All rights reserved.</p>
+    <p><a href="privacy-policy.html">Privacy Policy</a></p>
+    <p><a href="terms.html">Terms of Service</a></p>
+  </footer>
+
+  <!-- Assistant Icon outside of the footer -->
+ 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+  const messageBox = document.getElementById("messageBox");
+  const continueBtn = document.getElementById("continueBtn");
+
+  // Show the message box on page load with a slight delay
+  setTimeout(() => {
+    messageBox.classList.add("visible"); // Add visible class for animation
+  }, 500);
+
+  // Handle the Continue button click
+  continueBtn.addEventListener("click", () => {
+    messageBox.classList.remove("visible"); // Remove visible class to hide
+  });
+});
+
+  </script>
+</body>
+</html>

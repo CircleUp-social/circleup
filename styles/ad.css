@@ -1,0 +1,153 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f4f9;
+  color: #333; /* Ensure good contrast */
+}
+
+/* Header Styles */
+header {
+  background: #0f7a69;
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Content */
+main {
+  padding: 2rem;
+}
+
+/* Section Styles */
+.campaign-section,
+.analytics-section {
+  margin-bottom: 2.5rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+h2 {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #0053a6;
+}
+
+/* Form Styles */
+form label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 500;
+  color: #555;
+}
+
+form input[type="text"],
+form input[type="number"],
+form input[type="file"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+form input:focus {
+  outline: none;
+  border-color: #0078d7;
+  box-shadow: 0 0 5px rgba(0, 120, 215, 0.5);
+}
+
+form button {
+  background: #0078d7;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+form button:hover {
+  background: #0053a6;
+  transform: scale(1.02);
+}
+
+/* Analytics Section */
+.analytics-section {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-card {
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f9f9f9;
+  transition: box-shadow 0.3s ease;
+}
+
+.analytics-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.analytics-card h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #0053a6;
+  margin-bottom: 0.5rem;
+}
+
+.analytics-card p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.analytics-card a {
+  color: #0078d7;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.analytics-card a:hover {
+  color: #0053a6;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.9rem;
+  }
+
+  header {
+    font-size: 1.2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  form button {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+}

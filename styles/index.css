@@ -1,0 +1,204 @@
+/* Reset styles */
+body, h1, p, a, img, nav {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333333;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #008080; /* Teal */
+  padding: 10px 20px;
+}
+
+.navbar .logo {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.navbar .nav-links a {
+  text-decoration: none;
+  color: #fff;
+  margin-left: 15px;
+  padding: 8px 16px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar .nav-links a:hover {
+  background-color: #fff;
+  color: #008080;
+}
+
+/* Main Section */
+.main-section {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 20px;
+  gap: 20px;
+}
+
+.content {
+  max-width: 50%;
+}
+
+.content h1 {
+  font-size: 2.5rem;
+  color: #008080;
+}
+
+.content p {
+  margin: 10px 0 20px;
+  font-size: 1rem;
+  color: #666;
+}
+
+.cta-button {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #008080;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin-right: 10px;
+  font-weight: 600;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.cta-button {
+  padding: 12px 20px;
+  background-color: #008080;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #006666;  /* Darker shade for hover */
+  transform: scale(1.05);  /* Slightly enlarge the button */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  /* Soft shadow effect */
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer */
+footer {
+  background-color: #1e3a8a; /* Deep Blue */
+  color: #fff;
+  text-align: center;
+  padding: 15px 10px;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+footer a {
+  color: #d4af37; /* Soft Gold */
+  text-decoration: none;
+  font-weight: 600;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+ /* Styling for assistant icon */
+ .assistant-icon {
+  position: fixed; /* Fixes it to the viewport */
+  top: 580px;
+  right: 10px;
+  width: 50px; /* Adjust size as needed */
+  cursor: pointer;
+}
+
+footer {
+  padding: 20px;
+  text-align: center;
+}
+/* Modern Message Box */
+.message-box {
+  position: fixed;
+  bottom: -100%; /* Hidden initially */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%; /* Adaptable width */
+  max-width: 400px; /* Maximum width */
+  background-color: #ffffff;
+  color: #333333;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: bottom 0.6s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0; /* Initially hidden */
+}
+
+.message-box.visible {
+  bottom: 20px; /* Slide up into view */
+  opacity: 1; /* Fade in */
+}
+
+.message-box p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0.5rem 0 1rem;
+  color: #555555;
+}
+
+.message-box a {
+  color: #008080;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+.message-box a:hover {
+  color: #005f5f;
+}
+
+.message-box button {
+  background-color: #008080;
+  color: #ffffff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease;
+}
+
+.message-box button:hover {
+  background-color: #005f5f;
+  transform: translateY(-2px); /* Subtle lift */
+}
+
+.message-box button:active {
+  transform: translateY(0); /* Reset lift on click */
+}

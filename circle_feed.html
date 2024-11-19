@@ -1,0 +1,254 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circle Feed - CircleUp</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/circle_feed.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+  crossorigin="anonymous"></script>
+
+  <style>
+    /* Custom styles for feed container */
+    .feed-container {
+      width: 80%;
+      margin: 0 auto;
+      max-width: 900px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Post container styling */
+    .post {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Post content styling */
+    .post-content {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    /* Media (images and videos) styling */
+    .post-media {
+      max-width: 100%;
+      max-height: 300px;
+      margin-bottom: 10px;
+      object-fit: cover;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Download button styling */
+    .download-btn {
+      background-color: #008080;
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      text-align: center;
+      display: block;
+      width: 100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Post timestamp, user, likes, and comments styling */
+    .post-timestamp, .post-user {
+      font-size: 12px;
+      color: #777;
+      margin-top: 5px;
+    }
+
+    .post-user {
+      font-weight: bold;
+    }
+
+    .like-btn, .comment-btn {
+      margin: 5px 10px 0 0;
+      background-color: #1E3A8A;
+      color: #fff;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header with Circle Info -->
+  <header class="header">
+    <h1 id="circle-name">Circle Name</h1>
+    <p id="circle-description">Circle Description goes here...</p>
+  </header>
+
+  <!-- Feed Container -->
+  <div class="feed-container" id="feed-container">
+    <!-- Posts will be injected here dynamically -->
+  </div>
+
+  <!-- New Post Form -->
+  <div class="post-form-container">
+    <form id="new-post-form" enctype="multipart/form-data">
+      <textarea id="post-content" placeholder="Write something..." rows="3" required></textarea>
+      <input type="file" id="media-upload" accept="image/*,video/*">
+      <button type="submit">Post</button>
+    </form>
+  </div>
+
+  <!-- Firebase Configuration and Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+    const storage = getStorage(app);
+    const circleId = "sampleCircleId";
+    let currentUser = null;
+
+    async function loadCircleInfo() {
+      document.getElementById("circle-name").textContent = "Sample Circle Name";
+      document.getElementById("circle-description").textContent = "This is a sample description for the Circle.";
+    }
+
+    async function loadPosts() {
+      const postsRef = collection(db, "circles", circleId, "posts");
+      const q = query(postsRef, orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      const feedContainer = document.getElementById("feed-container");
+      feedContainer.innerHTML = "";
+
+      querySnapshot.forEach((doc) => {
+        const post = doc.data();
+        const postId = doc.id;
+        const postElement = document.createElement("div");
+        postElement.classList.add("post");
+
+        let mediaElement = '';
+        if (post.mediaUrl) {
+          if (post.mediaType === 'image') {
+            mediaElement = `<img src="${post.mediaUrl}" alt="Post image" class="post-media" />`;
+          } else if (post.mediaType === 'video') {
+            mediaElement = `<video controls class="post-media"><source src="${post.mediaUrl}" type="video/mp4"></video>`;
+          }
+          mediaElement += `
+            <a href="${post.mediaUrl}" download>
+              <button class="download-btn">Download</button>
+            </a>
+          `;
+        }
+
+        postElement.innerHTML = `
+          <p class="post-content">${post.content}</p>
+          ${mediaElement}
+          <p class="post-timestamp">${new Date(post.timestamp.seconds * 1000).toLocaleString()}</p>
+          <p class="post-user">Posted by: ${post.user || "Anonymous"}</p>
+          <button class="like-btn" onclick="likePost('${postId}')">Like (${post.likes || 0})</button>
+          <button class="comment-btn" onclick="commentPost('${postId}')">Comment</button>
+          <div class="comments-section" id="comments-${postId}"></div>
+        `;
+
+        feedContainer.appendChild(postElement);
+      });
+    }
+
+    async function likePost(postId) {
+      const postRef = doc(db, "circles", circleId, "posts", postId);
+      await updateDoc(postRef, {
+        likes: increment(1)
+      });
+      loadPosts();
+    }
+
+    function commentPost(postId) {
+      const comment = prompt("Enter your comment:");
+      if (comment) {
+        // Code to save comment goes here (extend as needed)
+        alert(`Comment saved: ${comment}`);
+      }
+    }
+
+    document.getElementById("new-post-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const postContent = document.getElementById("post-content").value;
+      const mediaFile = document.getElementById("media-upload").files[0];
+
+      if (postContent.trim() || mediaFile) {
+        try {
+          let mediaUrl = '';
+          let mediaType = '';
+
+          if (mediaFile) {
+            const mediaRef = ref(storage, `posts/${circleId}/${Date.now()}-${mediaFile.name}`);
+            await uploadBytes(mediaRef, mediaFile);
+            mediaUrl = await getDownloadURL(mediaRef);
+            mediaType = mediaFile.type.startsWith('image') ? 'image' : 'video';
+          }
+
+          if (currentUser) {
+            await addDoc(collection(db, "circles", circleId, "posts"), {
+              content: postContent,
+              timestamp: new Date(),
+              user: currentUser.username,
+              mediaUrl: mediaUrl,
+              mediaType: mediaType,
+              likes: 0
+            });
+
+            document.getElementById("post-content").value = "";
+            document.getElementById("media-upload").value = "";
+            loadPosts();
+          } else {
+            console.log("No user is logged in");
+          }
+        } catch (error) {
+          console.error("Error posting:", error);
+        }
+      }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        currentUser.username = userDoc.exists() ? userDoc.data().username || "Anonymous" : "Anonymous";
+        loadPosts();
+      } else {
+        console.log("No user signed in");
+      }
+    });
+
+    loadCircleInfo();
+  </script>
+</body>
+</html>

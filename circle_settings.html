@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circle Settings - CircleUp</title>
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/circle_settings.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- Circle Settings Container -->
+  <div class="settings-container">
+    <h1>Circle Settings</h1>
+
+    <!-- Circle Name -->
+    <div class="form-group">
+      <label for="circle-name">Circle Name</label>
+      <input type="text" id="circle-name" placeholder="Enter Circle name">
+    </div>
+
+    <!-- Circle Description -->
+    <div class="form-group">
+      <label for="circle-description">Circle Description</label>
+      <textarea id="circle-description" rows="4" placeholder="Enter Circle description"></textarea>
+    </div>
+
+    <!-- Privacy Setting -->
+    <div class="form-group">
+      <label for="circle-privacy">Privacy Setting</label>
+      <select id="circle-privacy">
+        <option value="public">Public</option>
+        <option value="private">Private</option>
+      </select>
+    </div>
+
+    <!-- Member Management -->
+    <div class="member-management">
+      <h2>Manage Members</h2>
+      <ul id="member-list">
+        <!-- List of members dynamically populated here -->
+      </ul>
+    </div>
+
+    <!-- Save Settings Button -->
+    <button onclick="saveCircleSettings()">Save Settings</button>
+  </div>
+
+  <!-- Firebase Configuration and Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+    let currentCircleId = "circleId123"; // Replace with dynamic Circle ID
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        loadCircleSettings();
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    async function loadCircleSettings() {
+      const circleDoc = await getDoc(doc(db, "circles", currentCircleId));
+      if (circleDoc.exists()) {
+        const circleData = circleDoc.data();
+        document.getElementById("circle-name").value = circleData.name || "";
+        document.getElementById("circle-description").value = circleData.description || "";
+        document.getElementById("circle-privacy").value = circleData.privacy || "public";
+        loadMembers(circleData.members || []);
+      }
+    }
+
+    async function loadMembers(members) {
+      const memberList = document.getElementById("member-list");
+      memberList.innerHTML = "";
+      members.forEach(member => {
+        const listItem = document.createElement("li");
+        listItem.textContent = member.email;
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove";
+        removeButton.onclick = () => removeMember(member.uid);
+        listItem.appendChild(removeButton);
+        memberList.appendChild(listItem);
+      });
+    }
+
+    async function removeMember(memberId) {
+      await updateDoc(doc(db, "circles", currentCircleId), {
+        members: arrayRemove({ uid: memberId })
+      });
+      loadCircleSettings();
+    }
+
+    async function saveCircleSettings() {
+      const name = document.getElementById("circle-name").value;
+      const description = document.getElementById("circle-description").value;
+      const privacy = document.getElementById("circle-privacy").value;
+
+      await updateDoc(doc(db, "circles", currentCircleId), {
+        name: name,
+        description: description,
+        privacy: privacy
+      });
+
+      alert("Circle settings updated successfully!");
+    }
+  </script>
+
+</body>
+</html>

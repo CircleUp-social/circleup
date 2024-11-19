@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+    crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .input-field {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background-color: #008080;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #006666;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success {
+            color: green;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .link a {
+            color: #008080;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Reset Your Password</h2>
+    <div class="error" id="error-message"></div>
+    <div class="success" id="success-message"></div>
+    <form id="reset-password-form">
+        <div class="input-field">
+            <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+        <button type="submit" class="btn">Reset Password</button>
+    </form>
+    <div class="link">
+        <p>Remembered your password? <a href="login.html">Login here</a></p>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+
+<script>
+    // Your Firebase configuration (update with your actual config)
+    const firebaseConfig = {
+        apiKey: "AIzaSyCPEjrbOTNB3qrwazva9YyUZ-KrSrVp4yA",
+        authDomain: "chatogram-a9f63.firebaseapp.com",
+        projectId: "chatogram-a9f63",
+        storageBucket: "chatogram-a9f63.appspot.com",
+        messagingSenderId: "1010637962534",
+        appId: "1:1010637962534:web:0208c006c24dfc87c955e7"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Handle the password reset
+    document.getElementById('reset-password-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+
+        // Clear previous messages
+        errorMessage.innerHTML = '';
+        successMessage.innerHTML = '';
+
+        // Send reset password email
+        auth.sendPasswordResetEmail(email)
+            .then(function () {
+                successMessage.innerHTML = 'Password reset email sent! Please check your inbox.';
+            })
+            .catch(function (error) {
+                const errorCode = error.code;
+                const errorMessageText = error.message;
+
+                if (errorCode === 'auth/invalid-email') {
+                    errorMessage.innerHTML = 'Invalid email address. Please check and try again.';
+                } else if (errorCode === 'auth/user-not-found') {
+                    errorMessage.innerHTML = 'No user found with this email address.';
+                } else {
+                    errorMessage.innerHTML = errorMessageText;
+                }
+            });
+    });
+</script>
+
+</body>
+</html>

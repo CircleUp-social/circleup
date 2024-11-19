@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - CircleUp</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/contact.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+
+  <!-- Firebase -->
+  <script type="module">
+    // Firebase SDK imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Form Submission Handler
+    async function submitFeedback(event) {
+      event.preventDefault();
+
+      // Get form values
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("message").value;
+
+      try {
+        // Add data to Firestore
+        await addDoc(collection(db, "feedback"), {
+          name,
+          email,
+          message,
+          timestamp: new Date()
+        });
+
+        // Show success message
+        alert("Thank you for your feedback! We’ll get back to you soon.");
+        document.getElementById("contact-form").reset(); // Clear form
+        loadFeedbacks(); // Reload feedbacks
+      } catch (error) {
+        console.error("Error submitting feedback: ", error);
+        alert("An error occurred while submitting your feedback. Please try again.");
+      }
+    }
+
+    // Load feedbacks from Firestore
+    async function loadFeedbacks() {
+      const feedbackContainer = document.getElementById("feedback-list");
+      feedbackContainer.innerHTML = ""; // Clear existing feedbacks
+
+      try {
+        const q = query(collection(db, "feedback"), orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+          const feedbackData = doc.data();
+          const feedbackElement = document.createElement("div");
+          feedbackElement.classList.add("feedback-item");
+          feedbackElement.innerHTML = `
+            <div class="feedback-header">
+              <strong>${feedbackData.name}</strong> <span>${new Date(feedbackData.timestamp.seconds * 1000).toLocaleString()}</span>
+            </div>
+            <div class="feedback-message">${feedbackData.message}</div>
+          `;
+          feedbackContainer.appendChild(feedbackElement);
+        });
+      } catch (error) {
+        console.error("Error loading feedbacks: ", error);
+      }
+    }
+
+    // Add Event Listener
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("contact-form").addEventListener("submit", submitFeedback);
+      loadFeedbacks(); // Load feedbacks on page load
+    });
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">CircleUp</div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="signup.html">Sign Up</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contact-section">
+    <div class="container">
+      <h1>Contact Us</h1>
+      <p>
+        Have questions or need assistance? Fill out the form below, and we’ll get back to you as soon as possible.
+      </p>
+
+      <form id="contact-form" class="contact-form">
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Your Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+        </div>
+        <div class="form-group">
+          <label for="message">Your Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
+        </div>
+        <button type="submit" class="submit-button">Send Message</button>
+      </form>
+
+      <div class="feedback-section">
+        <h2>Recent Feedback</h2>
+        <div id="feedback-list" class="feedback-list"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 CircleUp. All rights reserved.</p>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </div>
+  </footer>
+</body>
+</html>

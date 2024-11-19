@@ -1,0 +1,142 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F5F5DC;
+  color: #333333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #008080;
+  color: #FFFFFF;
+  width: 100%;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  font-size: 1rem;
+}
+
+.feed-container {
+  width: 90%;
+  max-width: 600px;
+  margin-top: 1rem;
+}
+
+.post {
+  background-color: #FFFFFF;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.post-content {
+  font-size: 1rem;
+  color: #333333;
+  margin-bottom: 0.5rem;
+}
+
+.post-timestamp, .post-user {
+  font-size: 0.9rem;
+  color: #666666;
+}
+
+.post-form-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#new-post-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #DDD;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  background-color: #F9F9F9;
+}
+
+button {
+  padding: 0.8rem;
+  background-color: #1E3A8A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #333333;
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: #FFFFFF;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.8rem 1.5rem;
+  color: #333333;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+  background-color: #F0F0F0;
+}
+.menu-icon {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.menu-icon span {
+  width: 5px;
+  height: 5px;
+  background-color: #FFFFFF;
+  margin: 3px;
+  border-radius: 50%;
+}

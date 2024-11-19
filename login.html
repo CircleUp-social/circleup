@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - CircleUp</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/login.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="login-box">
+      <h2>Login</h2>
+      <form id="login-form">
+        <div id="email-section">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Enter your email" required>
+          <button type="button" class="next-button" id="next-button">Next</button>
+        </div>
+        
+        <div id="password-section" style="display: none;">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required>
+          <button type="submit" class="login-button">Login</button>
+        </div>
+      </form>
+      <p class="signup-link">Don't have an account? <a href="signup.html">Sign Up</a></p>
+    </div>
+  </div>
+
+  <!-- Modal for error messages -->
+  <div id="dialogue-box" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <p id="dialogue-message">Message</p>
+    </div>
+  </div>
+
+  <!-- Firebase Configuration -->
+  <script type="module">
+    // Firebase Configuration
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Show the password section after entering email
+    document.getElementById("next-button").addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      if (email) {
+        document.getElementById("email-section").style.display = "none";
+        document.getElementById("password-section").style.display = "block";
+      } else {
+        showDialogue("Please enter a valid email address.");
+      }
+    });
+
+    // Login Form Submission
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        // Sign in the user
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "dashboard.html"; // Redirect to the main application page after login
+      } catch (error) {
+        showDialogue(error.message);
+      }
+    });
+    document.getElementById("next-button").addEventListener("click", () => {
+  const email = document.getElementById("email").value;
+  if (email) {
+    document.getElementById("email-section").style.display = "none";
+    document.getElementById("password-section").classList.add("show");
+  } else {
+    showDialogue("Please enter a valid email address.");
+  }
+});
+
+    // Show modal dialogue for error messages
+    function showDialogue(message) {
+      const modal = document.getElementById("dialogue-box");
+      const messageElement = document.getElementById("dialogue-message");
+      messageElement.textContent = message;
+      modal.style.display = "flex";
+
+      // Close modal
+      document.querySelector(".close-button").onclick = () => modal.style.display = "none";
+      window.onclick = (event) => {
+        if (event.target === modal) modal.style.display = "none";
+      };
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private Chat</title>
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/user_chat.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+     <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+
+  <div class="chat-container">
+    <div class="chat-header">
+      <img id="recipientProfilePic" src="" alt="Profile Picture" class="profile-pic">
+      <div class="username-container">
+        <div id="recipientUsername" class="username"></div>
+        <!-- Verified icon placed here -->
+        <span id="verifiedIcon" class="verified-icon">✔️</span>
+      </div>
+    </div>
+
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="input-container">
+      <input type="text" id="messageInput" placeholder="Type a message..." class="message-input"/>
+      <button id="sendMessageBtn" class="send-btn">Send</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, addDoc, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get("userId"); // Logged-in user ID
+    const recipientId = "recipientId";  // The user you want to message
+
+    // Ensure userId is always less than recipientId for consistent chat ID
+    const chatId = userId < recipientId ? `${userId}_${recipientId}` : `${recipientId}_${userId}`;
+    const chatRef = collection(db, "chats", chatId, "messages");
+
+    // Function to fetch user profile data (using userId)
+    async function fetchUserProfile() {
+      const userDoc = await getDoc(doc(db, "users", recipientId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+
+        // Set user profile details
+        document.getElementById("recipientProfilePic").src = userData.profilePicURL || "images/default.png";
+        document.getElementById("recipientUsername").textContent = userData.username;
+        
+        // Display verified icon if exists
+        const verifiedUrl = userData.verified;
+        const verifiedIcon = document.getElementById("verifiedIcon");
+        if (verifiedUrl && verifiedUrl !== "null" && verifiedUrl !== "undefined") {
+          verifiedIcon.style.display = 'inline';
+        } else {
+          verifiedIcon.style.display = 'none';
+        }
+      } else {
+        console.log("No such user document!");
+      }
+    }
+
+    // Function to send a message
+    async function sendMessage(messageText) {
+      const messageData = {
+        senderId: userId,
+        text: messageText,
+        timestamp: Timestamp.fromDate(new Date()),
+      };
+
+      await addDoc(chatRef, messageData); // Save message to the appropriate chat
+    }
+
+    // Function to display messages in real-time
+    function displayMessages() {
+      // Listen for real-time updates to the chat messages
+      onSnapshot(chatRef, (snapshot) => {
+        const messages = snapshot.docs.map(doc => doc.data());
+        const chatBox = document.getElementById("chatBox");
+        chatBox.innerHTML = ''; // Clear existing messages
+
+        messages.forEach(message => {
+          const messageDiv = document.createElement('div');
+          messageDiv.classList.add('message-container');
+
+          const messageContent = document.createElement('div');
+          messageContent.classList.add('message');
+
+          if (message.text) {
+            const messageText = document.createElement('span');
+            messageText.textContent = message.text;
+            messageContent.appendChild(messageText);
+          }
+
+          messageDiv.appendChild(messageContent);
+          chatBox.appendChild(messageDiv);
+        });
+
+        chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+      });
+    }
+
+    // Send message event listener
+    document.getElementById("sendMessageBtn").addEventListener("click", function () {
+      const messageInput = document.getElementById("messageInput");
+      const messageText = messageInput.value.trim();
+
+      if (messageText) {
+        sendMessage(messageText);
+        messageInput.value = ''; // Clear input field
+      } else {
+        alert("Please enter a message.");
+      }
+    });
+
+    // Initialize the page
+    fetchUserProfile();
+    displayMessages();
+  </script>
+
+</body>
+
+</html>

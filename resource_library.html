@@ -1,0 +1,133 @@
+<!DOCTYPE html> 
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resource Library - CircleUp</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/resource_library.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+  crossorigin="anonymous"></script>
+  <style>
+    /* Inline styling for preview card */
+    .resource-card {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+    .link-preview {
+      border: none;
+      width: 100%;
+      height: 200px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Resource Library Container -->
+  <div class="library-container">
+    <h1>Resource Library</h1>
+    <form id="resourceForm">
+      <label for="resourceTitle">Resource Title</label>
+      <input type="text" id="resourceTitle" name="resourceTitle" required>
+
+      <label for="resourceType">Resource Type</label>
+      <select id="resourceType" name="resourceType" required>
+        <option value="Document">Document</option>
+        <option value="Image">Image</option>
+        <option value="Link">Link</option>
+      </select>
+
+      <label for="resourceUrl">Resource URL</label>
+      <input type="url" id="resourceUrl" name="resourceUrl" placeholder="http://example.com" required>
+
+      <button type="submit">Add Resource</button>
+    </form>
+
+    <h2>Available Resources</h2>
+    <div id="resourceList">
+      <!-- Resources will be dynamically added here -->
+    </div>
+  </div>
+
+  <!-- Firebase Configuration and Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    const resourceForm = document.getElementById("resourceForm");
+    const resourceList = document.getElementById("resourceList");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadResources();
+        resourceForm.addEventListener("submit", (e) => addResource(e, user.uid));
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    async function addResource(e, userId) {
+      e.preventDefault();
+
+      const resource = {
+        title: resourceForm.resourceTitle.value,
+        type: resourceForm.resourceType.value,
+        url: resourceForm.resourceUrl.value,
+        addedBy: userId
+      };
+
+      await addDoc(collection(db, "circle_resources"), resource);
+      resourceForm.reset();
+      loadResources();
+    }
+
+    async function loadResources() {
+      resourceList.innerHTML = "";
+
+      const q = query(collection(db, "circle_resources"));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        const resourceData = doc.data();
+        const resourceCard = document.createElement("div");
+        resourceCard.classList.add("resource-card");
+
+        resourceCard.innerHTML = `
+          <h3>${resourceData.title}</h3>
+          <p><strong>Type:</strong> ${resourceData.type}</p>
+          ${resourceData.type === 'Link' ? `<iframe class="link-preview" src="${resourceData.url}" allowfullscreen></iframe>` : `<a href="${resourceData.url}" target="_blank">View Resource</a>`}
+        `;
+
+        resourceList.appendChild(resourceCard);
+      });
+    }
+  </script>
+
+</body>
+
+</html>

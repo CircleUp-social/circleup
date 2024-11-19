@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Planner - CircleUp</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/event_planner.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+  crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- Event Planner Container -->
+  <div class="event-planner-container">
+    <h1>Create an Event</h1>
+    <form id="eventForm">
+      <label for="eventName">Event Name</label>
+      <input type="text" id="eventName" name="eventName" required>
+
+      <label for="eventDate">Date</label>
+      <input type="date" id="eventDate" name="eventDate" required>
+
+      <label for="eventTime">Time</label>
+      <input type="time" id="eventTime" name="eventTime" required>
+
+      <label for="eventLocation">Location</label>
+      <input type="text" id="eventLocation" name="eventLocation" required>
+
+      <label for="eventDescription">Description</label>
+      <textarea id="eventDescription" name="eventDescription" rows="4"></textarea>
+
+      <button type="submit">Create Event</button>
+    </form>
+
+    <h2>Upcoming Events</h2>
+    <ul id="eventsList">
+      <!-- Events will be dynamically added here -->
+    </ul>
+  </div>
+
+  <!-- Firebase Configuration and Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    const eventForm = document.getElementById("eventForm");
+    const eventsList = document.getElementById("eventsList");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadEvents();
+        eventForm.addEventListener("submit", (e) => createEvent(e, user.uid));
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    async function createEvent(e, userId) {
+      e.preventDefault();
+
+      const event = {
+        name: eventForm.eventName.value,
+        date: eventForm.eventDate.value,
+        time: eventForm.eventTime.value,
+        location: eventForm.eventLocation.value,
+        description: eventForm.eventDescription.value,
+      };
+
+      await addDoc(collection(db, "users", userId, "events"), event);
+      eventForm.reset();
+      loadEvents();
+    }
+
+    async function loadEvents() {
+      eventsList.innerHTML = "";
+
+      const user = auth.currentUser;
+      if (user) {
+        const q = query(collection(db, "users", user.uid, "events"));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+          const eventData = doc.data();
+          const listItem = document.createElement("li");
+          listItem.classList.add("event-item");
+
+          listItem.innerHTML = `
+            <div class="event-info">
+              <h3>${eventData.name}</h3>
+              <p><strong>Date:</strong> ${eventData.date}</p>
+              <p><strong>Time:</strong> ${eventData.time}</p>
+              <p><strong>Location:</strong> ${eventData.location}</p>
+              <p>${eventData.description}</p>
+            </div>
+          `;
+
+          eventsList.appendChild(listItem);
+        });
+      }
+    }
+  </script>
+
+</body>
+</html>

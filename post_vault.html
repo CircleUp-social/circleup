@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Vault</title>
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F5F5DC;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        h2 {
+            color: #008080;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #008080;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .memory-card {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+        img, video {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .like-button {
+            background-color: #ff6347;
+        }
+        .delete-button {
+            background-color: #dc143c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Post</h2>
+        <!-- Memory Form -->
+        <form id="memoryForm">
+            <div class="form-group">
+                <label for="memoryTitle">Title:</label>
+                <input type="text" id="memoryTitle" name="memoryTitle" required>
+            </div>
+            <div class="form-group">
+                <label for="memoryDate">Date:</label>
+                <input type="date" id="memoryDate" name="memoryDate" required>
+            </div>
+            <div class="form-group">
+                <label for="memoryDescription">Description:</label>
+                <textarea id="memoryDescription" name="memoryDescription" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="memoryMedia">Upload Image/Video:</label>
+                <input type="file" id="memoryMedia" name="memoryMedia" accept="image/*,video/*">
+            </div>
+            <button type="submit">Add Memory</button>
+        </form>
+
+        <!-- Memory List -->
+        <div id="memoryList">
+            <h2></h2>
+        </div>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getFirestore, collection, addDoc, query, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js"; // Import deleteObject here
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+    authDomain: "voxaabykaif.firebaseapp.com",
+    databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+    projectId: "voxaabykaif",
+    storageBucket: "voxaabykaif.appspot.com",
+    messagingSenderId: "1038648133788",
+    appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth();
+const storage = getStorage(app);
+
+const memoryForm = document.getElementById("memoryForm");
+const memoryList = document.getElementById("memoryList");
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loadMemories();
+        memoryForm.addEventListener("submit", (e) => addMemory(e, user.uid));
+    } else {
+        window.location.href = "login.html";
+    }
+});
+
+async function addMemory(e, userId) {
+    e.preventDefault();
+
+    const memory = {
+        title: memoryForm.memoryTitle.value,
+        date: memoryForm.memoryDate.value,
+        description: memoryForm.memoryDescription.value,
+        mediaUrl: ""  // Will update this if a media file is uploaded
+    };
+
+    // Check if a file was uploaded
+    const mediaFile = memoryForm.memoryMedia.files[0];
+    if (mediaFile) {
+        const isImage = mediaFile.type.startsWith("image");
+        const subCollection = isImage ? "dropping" : "media";
+        const mediaRef = ref(storage, `users/${userId}/${subCollection}/${mediaFile.name}`);
+
+        await uploadBytes(mediaRef, mediaFile);
+        memory.mediaUrl = await getDownloadURL(mediaRef);
+        memory.mediaType = isImage ? "image" : "video";
+
+        await addDoc(collection(db, "users", userId, subCollection), memory);
+    } else {
+        await addDoc(collection(db, "users", userId, "dropping"), memory);
+    }
+
+    memoryForm.reset();
+    loadMemories();
+}
+
+async function loadMemories() {
+    memoryList.innerHTML = "<h2>Your Post</h2>";
+
+    const user = auth.currentUser;
+    if (user) {
+        // Fetch images from "dropping" subcollection
+        const droppingQuery = query(collection(db, "users", user.uid, "dropping"));
+        const droppingSnapshot = await getDocs(droppingQuery);
+        displayMemories(droppingSnapshot, "image");
+
+        // Fetch media files from "media" subcollection
+        const mediaQuery = query(collection(db, "users", user.uid, "media"));
+        const mediaSnapshot = await getDocs(mediaQuery);
+        displayMemories(mediaSnapshot, "video");
+    }
+}
+
+function displayMemories(querySnapshot, type) {
+    querySnapshot.forEach((doc) => {
+        const memoryData = doc.data();
+        const memoryCard = document.createElement("div");
+        memoryCard.classList.add("memory-card");
+
+        memoryCard.innerHTML = `
+            <h3>${memoryData.title}</h3>
+            <p><strong>Date:</strong> ${memoryData.date}</p>
+            <p>${memoryData.description}</p>
+        `;
+
+        // Display image or video based on media type
+        if (memoryData.mediaUrl) {
+            if (memoryData.mediaType === "image") {
+                const img = document.createElement("img");
+                img.src = memoryData.mediaUrl;
+                memoryCard.appendChild(img);
+            } else if (memoryData.mediaType === "video") {
+                const video = document.createElement("video");
+                video.src = memoryData.mediaUrl;
+                video.controls = true;
+                memoryCard.appendChild(video);
+            }
+        }
+
+        // Delete Button
+        const actionButtons = document.createElement("div");
+        actionButtons.classList.add("action-buttons");
+
+        const deleteButton = document.createElement("button");
+        deleteButton.classList.add("delete-button");
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => deleteMemory(doc.id, memoryData.mediaUrl));
+
+        actionButtons.appendChild(deleteButton);
+
+        memoryCard.appendChild(actionButtons);
+        memoryList.appendChild(memoryCard);
+    });
+}
+
+async function deleteMemory(memoryId, mediaUrl) {
+    const user = auth.currentUser;
+    if (user) {
+        try {
+            const memoryDocRef = doc(db, "users", user.uid, "dropping", memoryId);
+            await deleteDoc(memoryDocRef);
+
+            // If the memory has a media URL, delete it from Firebase Storage
+            if (mediaUrl) {
+                const mediaRef = ref(storage, mediaUrl);
+                await deleteObject(mediaRef);  // This will now work since deleteObject is imported
+            }
+
+            loadMemories(); // Reload the memories after deletion
+        } catch (error) {
+            console.error("Error deleting memory: ", error);
+        }
+    }
+}
+
+    </script>
+</body>
+</html>

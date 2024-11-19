@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Search - CircleUp</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="styles/global.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    header h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .user-profile-pic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .user-item {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      background-color: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.2s;
+    }
+
+    .user-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    main {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .verified-icon {
+      width: 20px;
+      height: 20px;
+      margin-left: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Search Users</h1>
+    <input type="text" id="searchInput" placeholder="Search for users..." />
+  </header>
+
+  <main>
+    <ul id="userList">
+      <!-- Search results will be displayed here -->
+    </ul>
+  </main>
+
+  <!-- Firebase Configuration and Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const userList = document.getElementById("userList");
+    const searchInput = document.getElementById("searchInput");
+
+    // Function to search for users based on the username
+    async function searchUsers(queryText) {
+      userList.innerHTML = ""; // Clear previous search results
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("username", ">=", queryText), where("username", "<=", queryText + "\uf8ff"));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(doc => {
+        const userData = doc.data();
+        const userId = doc.id;
+        const username = userData.username;
+        const profilePicURL = userData.profilePicURL || 'default.png'; // Fallback to default image
+        const verifiedUrl = userData.verified || null; // Check for verified URL
+
+        const listItem = document.createElement("li");
+        listItem.classList.add("user-item");
+
+        listItem.innerHTML = `
+          <img src="${profilePicURL}" alt="${username}'s profile picture" class="user-profile-pic">
+          <span>${username}</span>
+          <img id="verified-${userId}" src="${verifiedUrl || ''}" alt="Verified Icon" class="verified-icon">
+        `;
+
+        // Check if verified URL exists and display it next to the username
+        const verifiedIcon = listItem.querySelector(`#verified-${userId}`);
+        if (verifiedUrl && verifiedUrl !== "null" && verifiedUrl !== "undefined") {
+          verifiedIcon.style.display = 'inline';
+        } else {
+          verifiedIcon.style.display = 'none';
+        }
+
+        // Redirect to user_profile.html on click, passing the userId in the URL
+        listItem.addEventListener("click", () => {
+          window.location.href = `user_profile.html?userId=${userId}`;
+        });
+
+        userList.appendChild(listItem);
+      });
+    }
+
+    // Event listener for search input
+    searchInput.addEventListener("input", (e) => {
+      const queryText = e.target.value.trim();
+      if (queryText) { 
+        searchUsers(queryText);
+      } else { 
+        userList.innerHTML = ""; // Clear search results if input is empty
+      }
+    });
+  </script>
+
+</body>
+</html>

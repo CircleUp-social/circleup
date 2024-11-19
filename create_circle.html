@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Circle - CircleUp</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/create_circle.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- Circle Creation Form -->
+  <div class="container">
+    <div class="form-box">
+      <h2>Create a New Circle</h2>
+      <form id="create-circle-form">
+        <label for="circle-name">Circle Name</label>
+        <input type="text" id="circle-name" placeholder="Enter Circle Name" required>
+
+        <label for="circle-description">Description</label>
+        <textarea id="circle-description" placeholder="Describe your Circle" rows="3"></textarea>
+
+        <label for="circle-image">Profile Image (optional)</label>
+        <input type="file" id="circle-image" accept="image/*">
+
+        <button type="submit" class="submit-button">Create Circle</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal for Success/Error Messages -->
+  <div id="dialogue-box" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <p id="dialogue-message">Message</p>
+    </div>
+  </div>
+
+  <!-- Firebase Configuration and Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+
+    document.getElementById("create-circle-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const circleName = document.getElementById("circle-name").value;
+      const circleDescription = document.getElementById("circle-description").value;
+      const circleImage = document.getElementById("circle-image").files[0];
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          try {
+            let imageUrl = '';
+
+            // Upload the image if selected
+            if (circleImage) {
+              const storageRef = ref(storage, `circle_images/${circleImage.name}`);
+              await uploadBytes(storageRef, circleImage);
+              imageUrl = await getDownloadURL(storageRef);
+            }
+
+            // Save Circle data to Firestore under the user's UID
+            await addDoc(collection(db, `users/${user.uid}/circles`), {
+              name: circleName,
+              description: circleDescription,
+              imageUrl: imageUrl || 'default-profile-image-url', // Replace with default URL if needed
+              createdAt: new Date()
+            });
+
+            showDialogue("Circle created successfully!");
+            document.getElementById("create-circle-form").reset();
+          } catch (error) {
+            showDialogue("Error creating circle: " + error.message);
+          }
+        } else {
+          showDialogue("You must be logged in to create a circle.");
+        }
+      });
+    });
+
+    // Show modal dialogue for messages
+    function showDialogue(message) {
+      const modal = document.getElementById("dialogue-box");
+      const messageElement = document.getElementById("dialogue-message");
+      messageElement.textContent = message;
+      modal.style.display = "flex";
+
+      // Close modal
+      document.querySelector(".close-button").onclick = () => modal.style.display = "none";
+      window.onclick = (event) => {
+        if (event.target === modal) modal.style.display = "none";
+      };
+    }
+  </script>
+
+</body>
+</html>

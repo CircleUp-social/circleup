@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Users to Circle - CircleUp</title>
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="styles/global.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Page Specific Styles -->
+  <link rel="stylesheet" href="styles/admin_dashboard.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+  crossorigin="anonymous"></script>
+  <style>
+    .user-profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    li.selected {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="admin-header">
+    <h1>CircleUp Admin Dashboard</h1>
+    <nav>
+      <span class="app-name"></span>
+      <div class="dropdown">
+        <button class="menu-btn">⋮</button>
+        <div class="dropdown-content">
+          <a href="user_management.html">Manage Users</a>
+          <a href="activity_logs.html">Activity Logs</a>
+          <a href="profile.html">Settings</a>
+          <a href="login.html">Logout</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-content">
+    <!-- Add Users Section -->
+    <section class="add-users-to-circle">
+      <h2>Select a Circle and Add Users</h2>
+      <label for="circleSelect">Select Circle:</label>
+      <select id="circleSelect"></select> <!-- Populated dynamically -->
+
+      <h3>Users Available for Adding</h3>
+      <input type="text" id="searchBar" placeholder="Search for users..." />
+      <ul id="userList"></ul> <!-- User list populated dynamically -->
+
+      <button id="addUserButton">Add User to Circle</button>
+    </section>
+
+    <!-- Circle Members Sidebar -->
+    <section class="circle-sidebar">
+      <h3>Circle Members</h3>
+      <ul id="circleSidebar"></ul> <!-- Circle members displayed here -->
+    </section>
+  </main>
+
+  <!-- Firebase Configuration & Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let circles = [];
+    let users = [];
+    let selectedCircleId = "";
+
+    // Load circles and users for the logged-in user
+    async function loadCirclesAndUsers(userId) {
+      try {
+        // Fetch all users
+        const userCollection = await getDocs(collection(db, "users"));
+        users = userCollection.docs.map(userDoc => ({
+          id: userDoc.id,
+          username: userDoc.data().username,
+          email: userDoc.data().email,
+          profilePic: userDoc.data().profilePic || 'defaultProfilePicUrl' // Fallback for missing profile pics
+        }));
+
+        // Fetch user's circles
+        const circlesSnapshot = await getDocs(collection(db, "users", userId, "circles"));
+        circles = circlesSnapshot.docs.map(circleDoc => ({
+          id: circleDoc.id,
+          name: circleDoc.data().name
+        }));
+
+        populateUI();
+      } catch (error) {
+        console.error("Error loading data:", error);
+        alert("Failed to load data. Please try again.");
+      }
+    }
+
+    // Populate dropdown and user list
+    function populateUI() {
+      const circleSelect = document.getElementById("circleSelect");
+      const userList = document.getElementById("userList");
+
+      circleSelect.innerHTML = circles.map(circle => `<option value="${circle.id}">${circle.name}</option>`).join("")
+
+      // Show users when a circle is selected
+      circleSelect.addEventListener("change", function () {
+        selectedCircleId = this.value;
+        updateCircleSidebar(selectedCircleId);
+      });
+
+      // Filter users on search input
+      document.getElementById("searchBar").addEventListener("input", function () {
+        const searchTerm = this.value.toLowerCase();
+        const filteredUsers = users.filter(user => user.username.toLowerCase().includes(searchTerm));
+        userList.innerHTML = filteredUsers.map(user => `
+          <li data-user-id="${user.id}">
+            <img src="${user.profilePic}" alt="${user.username}'s profile" class="user-profile-pic" />
+            ${user.username} (${user.email})
+          </li>
+        `).join("");
+      });
+    }
+
+    // Add user to circle in Firestore
+    async function addUserToCircle() {
+      const selectedUserElement = document.querySelector("#userList li.selected");
+      if (!selectedUserElement) {
+        alert("Please select a user.");
+        return;
+      }
+
+      const selectedUserId = selectedUserElement.dataset.userId;
+
+      try {
+        // Add user to the circle's 'circleMembers' collection
+        const circleMemberRef = doc(db, "circleMembers", selectedCircleId, selectedUserId);
+        await setDoc(circleMemberRef, {
+          userId: selectedUserId,
+          circleId: selectedCircleId,
+          timestamp: new Date()
+        });
+
+        updateCircleSidebar(selectedCircleId);
+        alert("User added to the circle.");
+      } catch (error) {
+        console.error("Error adding user:", error);
+        alert("Failed to add user. Please try again.");
+      }
+    }
+
+    // Update sidebar with circle members
+    async function updateCircleSidebar(circleId) {
+      const sidebar = document.getElementById("circleSidebar");
+      sidebar.innerHTML = "";
+
+      try {
+        // Fetch circle members from 'circleMembers' collection
+        const membersSnapshot = await getDocs(collection(db, "circleMembers", circleId));
+        membersSnapshot.docs.forEach(doc => {
+          const memberData = doc.data();
+          const user = users.find(u => u.id === memberData.userId);
+          if (user) {
+            sidebar.innerHTML += `
+              <li>
+                <img src="${user.profilePic}" alt="${user.username}'s profile" class="user-profile-pic" />
+                ${user.username} (${user.email})
+              </li>
+            `;
+          }
+        });
+      } catch (error) {
+        console.error("Error updating sidebar:", error);
+      }
+    }
+
+    // Event Listeners
+    document.getElementById("userList").addEventListener("click", e => {
+      if (e.target.tagName === "LI" || e.target.closest("LI")) {
+        document.querySelector("#userList li.selected")?.classList.remove("selected");
+        e.target.closest("LI").classList.add("selected");
+      }
+    });
+
+    document.getElementById("addUserButton").addEventListener("click", addUserToCircle);
+
+    // Authenticate user
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        loadCirclesAndUsers(user.uid);
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+
+</body>
+</html>

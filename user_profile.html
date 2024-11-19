@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - CircleUp</title>
+  <link rel="stylesheet" href="styles/global.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+     <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .profile-container {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-pic {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+
+    .username-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .username {
+      font-size: 16px;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .verified-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: green;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      display: none; /* Hidden by default */
+    }
+
+    .send-message-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #008080;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .send-message-btn:hover {
+      background-color: #006666;
+    }
+
+    .feed-container {
+      margin-top: 40px;
+    }
+
+    .post {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .post-username {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .post-content {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .media-file {
+      margin-top: 15px;
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    video::-webkit-media-controls {
+      display: none !important; /* Hide default controls */
+    }
+
+    .volume-control {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      border-radius: 50%;
+      padding: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post {
+      position: relative;
+    }
+
+    @media (max-width: 768px) {
+      .profile-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .profile-pic {
+        margin-bottom: 10px;
+      }
+
+      .feed-container {
+        margin-top: 20px;
+      }
+
+      .media-file {
+        max-height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-container">
+    <img id="profilePic" src="default.png" alt="Profile Picture" class="profile-pic">
+    <div>
+      <div class="username-container">
+        <span id="username" class="username"></span>
+        <div id="verifiedIcon" class="verified-icon">✔</div>
+      </div>
+      <p id="status"></p>
+      <button id="sendMessageBtn" class="send-message-btn">Send Message</button>
+    </div>
+  </div>
+
+  <div class="feed-container" id="feedContainer">
+    <!-- Media posts will be displayed here -->
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get("userId");
+
+    async function displayUserProfile() {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        document.getElementById("username").textContent = userData.username;
+        document.getElementById("profilePic").src = userData.profilePicURL || "default.png";
+        document.getElementById("status").textContent = userData.status || "No status available";
+
+        const verifiedIcon = document.getElementById("verifiedIcon");
+        verifiedIcon.style.display = userData.verified ? 'inline-flex' : 'none';
+
+        // Fetch posts from both 'media' and 'dropping' sub-collections
+        const mediaSnapshot = await getDocs(collection(db, "users", userId, "media"));
+        const droppingSnapshot = await getDocs(collection(db, "users", userId, "dropping"));
+
+        const feedContainer = document.getElementById("feedContainer");
+
+        // Function to display posts
+        function displayPosts(postsSnapshot) {
+          postsSnapshot.forEach(doc => {
+            const postData = doc.data();
+            const postElement = document.createElement("div");
+            postElement.classList.add("post");
+
+            let mediaElement;
+            if (postData.mediaType === "image") {
+              mediaElement = document.createElement("img");
+              mediaElement.src = postData.mediaUrl;
+              mediaElement.alt = "Media Image";
+              mediaElement.classList.add("media-file");
+            } else if (postData.mediaType === "video") {
+              mediaElement = document.createElement("video");
+              mediaElement.src = postData.mediaUrl;
+              mediaElement.classList.add("media-file");
+              mediaElement.muted = true;
+
+              // Toggle play/pause on click
+              mediaElement.addEventListener("click", () => {
+                if (mediaElement.paused) {
+                  mediaElement.play();
+                } else {
+                  mediaElement.pause();
+                }
+              });
+
+              // Volume control button
+              const volumeControl = document.createElement("div");
+              volumeControl.classList.add("volume-control");
+              volumeControl.textContent = "🔈"; // Volume icon
+
+              volumeControl.addEventListener("click", () => {
+                mediaElement.muted = !mediaElement.muted;
+                volumeControl.textContent = mediaElement.muted ? "🔈" : "🔊";
+              });
+
+              postElement.appendChild(volumeControl);
+            }
+
+            postElement.innerHTML += ` 
+              <div class="post-username">${userData.username}</div>
+              <div class="post-content">${postData.content || ""}</div>
+            `;
+            if (mediaElement) postElement.appendChild(mediaElement);
+
+            feedContainer.appendChild(postElement);
+          });
+        }
+
+        // Display posts from both sub-collections
+        displayPosts(mediaSnapshot);
+        displayPosts(droppingSnapshot);
+      } else {
+        console.log("User not found");
+      }
+    }
+
+    document.getElementById("sendMessageBtn").addEventListener("click", function () {
+      window.location.href = `user_chat.html?userId=${userId}`;
+    });
+
+    displayUserProfile();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - CircleUp</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/signup.css">
+  <link rel="stylesheet" href="styles/global.css">
+</head>
+<body>
+
+  <div class="container">
+    <div class="signup-box">
+      <h2>Create Your Account</h2>
+      <form id="signup-form">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Choose a unique username" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter a secure password" required>
+
+        <label for="profile-pic">Profile Picture (optional)</label>
+        <input type="file" id="profile-pic" accept="image/*">
+
+        <button type="submit" class="signup-button">Sign Up</button>
+      </form>
+      <p class="login-link">Already have an account? <a href="login.html">Login</a></p>
+    </div>
+  </div>
+
+  <!-- Modal for messages -->
+  <div id="dialogue-box" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <p id="dialogue-message">Message</p>
+    </div>
+  </div>
+
+  <!-- Firebase Configuration -->
+  <script type="module">
+    // Firebase Configuration
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+    const db = getFirestore(app);
+
+    // Enforce lowercase username input and add '@' if missing
+    document.getElementById("username").addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\s+/g, "").toLowerCase(); // Remove spaces and convert to lowercase
+      if (!value.startsWith("@")) {
+        value = "@" + value; // Add "@" if not present
+      }
+      e.target.value = value;
+    });
+
+    // Signup Form Submission
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const profilePic = document.getElementById("profile-pic").files[0];
+      const defaultProfilePicURL = "https://example.com/default-profile.png"; // Link to your default profile image
+
+      try {
+        // Check if the username is unique
+        const usernamesQuery = query(collection(db, "users"), where("username", "==", username));
+        const querySnapshot = await getDocs(usernamesQuery);
+
+        if (!querySnapshot.empty) {
+          showDialogue("Username is already taken. Please choose another.");
+          return; // Stop if username exists
+        }
+
+        // Create user with email and password
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Profile Picture Upload
+        let profilePicURL = defaultProfilePicURL;
+        if (profilePic) {
+          const profilePicRef = ref(storage, `profilePictures/${user.uid}`);
+          await uploadBytes(profilePicRef, profilePic);
+          profilePicURL = await getDownloadURL(profilePicRef);
+        }
+
+        // Save user data to Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          username: username,
+          email: email,
+          profilePicURL: profilePicURL,
+          createdAt: new Date()
+        });
+
+        // Redirect to login page
+        window.location.href = "login.html";
+      } catch (error) {
+        showDialogue(error.message);
+      }
+    });
+
+    // Show modal dialogue for messages
+    function showDialogue(message) {
+      const modal = document.getElementById("dialogue-box");
+      const messageElement = document.getElementById("dialogue-message");
+      messageElement.textContent = message;
+      modal.style.display = "flex";
+
+      // Close modal
+      document.querySelector(".close-button").onclick = () => modal.style.display = "none";
+      window.onclick = (event) => {
+        if (event.target === modal) modal.style.display = "none";
+      };
+    }
+  </script>
+
+</body>
+</html>

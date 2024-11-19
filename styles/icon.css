@@ -1,0 +1,102 @@
+/* General reset for all elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif; /* Modern sans-serif font */
+    background-color: #f7f7f7; /* Soft light background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+    overflow: hidden; /* Prevent overflow */
+}
+
+/* Title for the page */
+h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* Container to center and display icons */
+.icon-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap; /* Wrap items to the next line on smaller screens */
+    max-width: 900px; /* Max width to keep it tidy */
+    margin-top: 30px;
+}
+
+/* Individual icon item styling */
+.icon-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Stack the icon and text vertically */
+    width: 90px;
+    height: 120px; /* Increased height to accommodate the text below */
+    background-color: #ffffff;
+    border-radius: 12px; /* Rounded corners for a modern look */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Soft shadow */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    overflow: hidden; /* Ensure icon stays inside the container */
+    text-align: center;
+    padding: 10px;
+}
+
+/* Hover effects for the icon container */
+.icon-item:hover {
+    transform: translateY(-8px); /* Elevate on hover */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+    background-color: #00796b; /* Change background on hover */
+}
+
+.icon-item:hover .material-icons {
+    color: white; /* Change icon color on hover */
+}
+
+.material-icons {
+    font-size: 48px; /* Icon size */
+    color: #00796b; /* Initial icon color */
+    transition: color 0.3s ease; /* Smooth transition for icon color change */
+}
+
+/* Apply Roboto font to the icon name text */
+.icon-item p {
+    font-family: 'Roboto', sans-serif; /* Ensure Roboto is applied */
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px; /* Space between the icon and text */
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.icon-item:hover p {
+    color: white; /* Change text color on hover */
+}
+
+/* Responsive design for small screens */
+@media (max-width: 768px) {
+    .icon-container {
+        justify-content: space-around; /* Spread out the icons on smaller screens */
+    }
+
+    .icon-item {
+        width: 80px;  /* Smaller size on mobile */
+        height: 110px; /* Adjust height on mobile */
+    }
+
+    h1 {
+        font-size: 24px; /* Smaller title on mobile */
+    }
+}

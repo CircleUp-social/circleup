@@ -1,0 +1,105 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F5F5DC;
+  color: #333333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.vault-container {
+  background-color: #FFFFFF;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: #1E3A8A;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #333333;
+}
+
+form input, form textarea, form button {
+  margin-top: 0.3rem;
+  padding: 0.7rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+form textarea {
+  resize: none;
+}
+
+form button {
+  background-color: #1E3A8A;
+  color: #FFFFFF;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+form button:hover {
+  background-color: #333333;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  color: #008080;
+  text-align: center;
+}
+h4 {
+  font-size: 1.0rem;
+  margin-top: 2rem;
+  color: #eb0a0a;
+  text-align: center;
+}
+
+#memoryList {
+  margin-top: 1.5rem;
+}
+
+.memory-card {
+  background-color: #F0F0F0;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  transition: background 0.3s ease;
+}
+
+.memory-card h3 {
+  color: #1E3A8A;
+  font-size: 1.2rem;
+}
+
+.memory-card p {
+  font-size: 0.9rem;
+  color: #333333;
+}

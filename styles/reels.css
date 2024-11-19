@@ -1,0 +1,253 @@
+/* Importing Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+/* Body and General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fafafa;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    color: #333;
+}
+
+/* Reels Container for Vertical Layout */
+.reels-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Individual Post Styling with Dynamic Size */
+.post {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 15px 0;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover Effect for Post */
+.post:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Username Styling */
+.post h3:first-of-type {
+    font-size: 1.2rem;
+    color: #0078d4;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Post Image (Responsive) */
+.post-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    border-radius: 15px;
+    margin: 15px 0;
+    object-fit: cover;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Post Title */
+.post h3 {
+    font-size: 1.3rem;
+    margin: 10px 0;
+    color: #333;
+    font-weight: 700;
+}
+
+/* Post Description */
+.post p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+/* Like, Comment, and Share Buttons */
+.post-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 15px;
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    right: 20px;
+}
+
+/* Like, Comment, and Share Buttons Styling */
+.like-icon,
+.comment-icon,
+.share-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: opacity 0.3s ease-in-out;
+    
+}
+
+/* Hover Effects for Like, Comment, and Share Icons */
+.like-icon:hover,
+.comment-icon:hover,
+.share-icon:hover {
+    opacity: 0.7;
+}
+
+/* Like Count Styling */
+#likeCount {
+    color: #0078d4;
+    margin-left: 10px;
+    font-size: 1.1rem;
+}
+
+/* Button Styling for Actions */
+button {
+    background-color: #0078d4;
+    color: white;
+    padding: 14px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+}
+
+/* Button Hover Effect */
+button:hover {
+    background-color: #005a8d;
+}
+
+/* Comments Section Styling */
+.comments {
+    margin-top: 20px;
+    padding-left: 15px;
+    border-left: 3px solid #f0f2f5;
+}
+
+/* Individual Comment Styling */
+.comments p {
+    font-size: 1rem;
+    color: #666;
+    margin: 5px 0;
+}
+
+.comments small {
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* Comment Input Styling */
+input[type="text"] {
+    width: 100%;
+    padding: 14px;
+    margin-top: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border 0.3s;
+}
+
+/* Focus State for Comment Input */
+input[type="text"]:focus {
+    border-color: #0078d4;
+}
+
+/* Mobile-Specific Adjustments */
+@media (max-width: 600px) {
+    .reels-container {
+        padding: 15px;
+    }
+
+    .post {
+        padding: 18px;
+    }
+
+    .post h3 {
+        font-size: 1.2rem;
+    }
+
+    .post p {
+        font-size: 1rem;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    input[type="text"] {
+        padding: 12px;
+    }
+}
+
+/* Fixed Header */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    color: #333;
+    padding: 10px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Global Transitions for Buttons and Links */
+a,
+button {
+    transition: all 0.3s ease;
+}
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.username {
+    display: inline;
+    font-weight: bold;
+}
+
+.verified-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+}

@@ -1,0 +1,265 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333333;
+  background-color: #F5F5DC; /* Warm beige background for CircleUp */
+  line-height: 1.6;
+  animation: fadeIn 1s ease-in-out; /* Fade in on page load */
+}
+
+/* Global Color Palette */
+:root {
+  --primary-color: #008080;      /* Teal */
+  --secondary-color: #1E3A8A;    /* Deep Blue */
+  --accent-color: #D4AF37;       /* Soft Gold */
+  --background-color: #F5F5DC;   /* Warm Beige */
+  --text-color: #333333;         /* Dark Gray */
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+p, a, button {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+a {
+  text-decoration: none;
+  color: var(--secondary-color);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--accent-color);
+}
+
+/* Layout & Containers */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.flex {
+  display: flex;
+  gap: 1rem;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Buttons */
+button {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--secondary-color);
+  transform: scale(1.05); /* Scale up on hover */
+  animation: scaleUp 0.2s ease forwards; /* Animation for scale up */
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Forms */
+input, select, textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--secondary-color);
+  outline: none;
+}
+
+/* Headers and Navigation */
+header {
+  background-color: var(--secondary-color);
+  color: #ffffff;
+  padding: 1rem;
+}
+
+header .app-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+header nav a {
+  color: #ffffff;
+  margin: 0 1rem;
+  font-weight: 600;
+}
+
+/* Cards */
+.card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin: 1rem 0;
+  transition: transform 0.2s ease;
+  animation: slideUp 0.6s ease forwards; /* Slide up on load */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Dialogs and Modals */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideUp 0.5s ease forwards; /* Slide up on appear */
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+/* Alerts */
+.alert {
+  padding: 1rem;
+  border-radius: 5px;
+  color: #ffffff;
+  margin: 1rem 0;
+}
+
+.alert-success {
+  background-color: #4CAF50;
+}
+
+.alert-error {
+  background-color: #f44336;
+}
+
+/* Footer */
+footer {
+  background-color: var(--secondary-color);
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+footer p {
+  font-size: 0.9rem;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .flex {
+    flex-direction: column;
+  }
+
+  header .app-name {
+    font-size: 1.2rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: 1rem;
+  }
+
+  /* Buttons */
+  button {
+    padding: 0.6rem 1.2rem;
+  }
+
+  /* Inputs and Textarea */
+  input, select, textarea {
+    padding: 0.6rem;
+  }
+}
+
+/* Animations */
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Slide Up Animation */
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  } 
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale Up on Hover */
+@keyframes scaleUp {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Verification</title>
+
+    <!-- Firebase JS SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        
+        // Initialize Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+          authDomain: "voxaabykaif.firebaseapp.com",
+          databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+          projectId: "voxaabykaif",
+          storageBucket: "voxaabykaif.appspot.com",
+          messagingSenderId: "1038648133788",
+          appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // DOM elements
+        const searchBar = document.getElementById('searchBar');
+        const userList = document.getElementById('userList');
+        const verifyBtn = document.getElementById('verifyBtn');
+        let selectedUserId = null;
+        const messageBox = document.getElementById('messageBox');
+
+        // Function to search for users based on the username
+        async function searchUsers(queryText) {
+            try {
+                userList.innerHTML = "";  // Clear previous search results
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, where("username", ">=", queryText), where("username", "<=", queryText + "\uf8ff"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    userList.innerHTML = '<li>No users found</li>';
+                    return;
+                }
+
+                querySnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    const userId = doc.id;
+                    const username = userData.username;
+                    const profilePicURL = userData.profilePicURL || 'default.png'; // Fallback to default image
+                    const verifiedUrl = userData.verified || null; // Check for verified URL
+
+                    const listItem = document.createElement("li");
+                    listItem.classList.add("user-item");
+                    listItem.setAttribute('data-user-id', userId); // Store the userId for later reference
+
+                    listItem.innerHTML = `
+                        <img src="${profilePicURL}" alt="${username}'s profile picture" class="user-profile-pic">
+                        <span>${username}</span>
+                        <img id="verified-${userId}" src="${verifiedUrl || ''}" alt="Verified Icon" class="verified-icon">
+                    `;
+
+                    // Check if verified URL exists and display it next to the username
+                    const verifiedIcon = listItem.querySelector(`#verified-${userId}`);
+                    if (verifiedUrl && verifiedUrl !== "null" && verifiedUrl !== "undefined") {
+                        verifiedIcon.style.display = 'inline';
+                    } else {
+                        verifiedIcon.style.display = 'none';
+                    }
+
+                    // Handle user click to select
+                    listItem.onclick = () => {
+                        const previouslySelected = document.querySelector('.selected');
+                        if (previouslySelected) {
+                            previouslySelected.classList.remove('selected');
+                        }
+
+                        listItem.classList.add('selected');
+                        selectedUserId = userId;
+                        verifyBtn.style.display = 'inline';  // Show the "Add Verified" button when a user is selected
+                    };
+
+                    userList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error("Error fetching users: ", error);
+            }
+        }
+
+        // Verify the selected user and add the 'verified' field to their Firestore document
+        async function verifyUser() {
+            if (selectedUserId) {
+                try {
+                    const userRef = doc(db, 'users', selectedUserId);
+                    await updateDoc(userRef, {
+                        verified: "https://firebasestorage.googleapis.com/v0/b/voxaabykaif.appspot.com/o/verified%2Ftick.png.png?alt=media&token=f32f279d-b409-4414-94a8-c2cf32c8c24a"
+                    });
+                    showMessage('User has been verified successfully!', 'success');
+                    verifyBtn.style.display = 'none';  // Hide the "Add Verified" button after action
+                } catch (error) {
+                    console.error("Error updating document: ", error);
+                    showMessage('Failed to verify user. Please try again.', 'error');
+                }
+            } else {
+                showMessage('Please select a user first.', 'warning');
+            }
+        }
+
+        // Show custom message on the page
+        function showMessage(message, type) {
+            messageBox.textContent = message;
+            messageBox.className = `message ${type}`;
+            setTimeout(() => {
+                messageBox.textContent = '';
+                messageBox.className = 'message';  // Reset class to remove the message
+            }, 5000);
+        }
+
+        // Listen for input changes in the search bar
+        searchBar.addEventListener('input', (event) => {
+            const queryText = event.target.value;
+            if (queryText.trim()) {
+                searchUsers(queryText);
+            } else {
+                userList.innerHTML = '';  // Clear user list when search text is empty
+            }
+        });
+
+        // Add event listener for the "Add Verified" button
+        verifyBtn.addEventListener('click', verifyUser);
+    </script>
+
+    <!-- Styling -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+        }
+
+        #searchBar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        #userList {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            background-color: #fafafa;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .user-item:hover {
+            background-color: #e1e1e1;
+        }
+
+        .user-profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .verified-icon {
+            width: 20px;
+            height: 20px;
+            margin-left: 8px;
+        }
+
+        .selected {
+            background-color: #d1f7d1;  /* Highlight selected user */
+        }
+
+        #verifyBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            display: none;
+        }
+
+        #verifyBtn:hover {
+            background-color: #45a049;
+        }
+
+        #verifyBtn:active {
+            background-color: #388e3c;
+        }
+
+        /* Message box styling */
+        .message {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .message.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .message.error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .message.warning {
+            background-color: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Verification</h1>
+        <input type="text" id="searchBar" placeholder="Search for a user..." />
+        <ul id="userList"></ul>
+        <button id="verifyBtn">Add Verified</button>
+        <div id="messageBox" class="message"></div>
+    </div>
+</body>
+</html>

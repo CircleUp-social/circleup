@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Vault - CircleUp</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles/memory_vault.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <!-- Memory Vault Container -->
+  <div class="vault-container">
+    <h1>Your Memory Vault</h1>
+
+    <!-- Form to Add a New Memory -->
+    <form id="memoryForm" class="memory-form">
+      <label for="memoryTitle">Memory Title</label>
+      <input type="text" id="memoryTitle" name="memoryTitle" placeholder="Enter a title..." required>
+
+      <label for="memoryDate">Date</label>
+      <input type="date" id="memoryDate" name="memoryDate" required>
+
+      <label for="memoryDescription">Description</label>
+      <textarea id="memoryDescription" name="memoryDescription" rows="4" placeholder="Describe your memory..." required></textarea>
+
+      <button type="submit">Add Memory</button>
+    </form>
+
+    <!-- Display Saved Memories -->
+    <h2>Saved Memories</h2>
+    <div id="memoryList" class="memory-list">
+      <!-- Memories will be dynamically added here -->
+    </div>
+  </div>
+
+  <!-- Firebase Configuration and Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    const memoryForm = document.getElementById("memoryForm");
+    const memoryList = document.getElementById("memoryList");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadMemories(user.uid);
+        memoryForm.addEventListener("submit", (e) => addMemory(e, user.uid));
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    async function addMemory(e, userId) {
+      e.preventDefault();
+
+      const memory = {
+        title: memoryForm.memoryTitle.value,
+        date: memoryForm.memoryDate.value,
+        description: memoryForm.memoryDescription.value
+      };
+
+      await addDoc(collection(db, "users", userId, "memories"), memory);
+      memoryForm.reset();
+      loadMemories(userId);
+    }
+
+    async function loadMemories(userId) {
+      memoryList.innerHTML = "";
+
+      const q = query(collection(db, "users", userId, "memories"));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        const memoryData = doc.data();
+        const memoryCard = document.createElement("div");
+        memoryCard.classList.add("memory-card");
+
+        memoryCard.innerHTML = `
+          <h3>${memoryData.title}</h3>
+          <p><strong>Date:</strong> ${memoryData.date}</p>
+          <p>${memoryData.description}</p>
+        `;
+
+        memoryList.appendChild(memoryCard);
+      });
+    }
+  </script>
+</body>
+
+</html>

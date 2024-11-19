@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circle Chat</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="styles/circle_chat.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
+     crossorigin="anonymous"></script>
+  <style>
+    /* General Styles */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 400px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+    .chat-header img {
+      cursor: pointer;
+    }
+    
+    /* Dropdown Menu */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%; /* Position below the header */
+      right: 0; /* Align to the right */
+      background-color: white;
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      border-radius: 6px;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease;
+    }
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+    }
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+    
+    /* Chat Messages */
+    .chat-messages {
+      flex-grow: 1;
+      padding: 16px;
+      overflow-y: auto;
+      background-color: #f5f5dc;
+    }
+    .chat-message {
+      margin-bottom: 12px;
+    }
+    .chat-message .user {
+      font-weight: bold;
+      color: #008080;
+    }
+    
+    /* Fade-In Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  
+</head>
+<body>
+  
+  <div class="chat-container">
+    <header class="chat-header">
+      <h2>Circle Chat</h2>
+      <img src="images/settings.png" id="settings-icon" alt="Settings"/>
+      <div id="dropdown-menu" class="dropdown-content">
+        <a href="#" id="add-member">Add Member</a>
+        <a href="resource_library.html" id="add-member">Resource Library</a>
+        <a href="event_planner.html" id="add-member">Upcoming Events</a>
+        <a href="memory_vault.html" id="add-member">Add Memories</a>
+      </div>
+    </header>
+    <div class="chat-messages" id="chat-messages"></div>
+    <form id="message-form">
+      <input type="text" id="message-input" placeholder="Type a message" />
+      <input type="file" id="file-input" accept="image/*,video/*" />
+      <button type="button" onclick="document.getElementById('file-input').click()">📎</button>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const circleId = urlParams.get("circleId");
+
+    const chatMessages = document.getElementById("chat-messages");
+    const messageForm = document.getElementById("message-form");
+    const messageInput = document.getElementById("message-input");
+    const fileInput = document.getElementById("file-input");
+
+    const messagesRef = collection(db, `circles/${circleId}/messages`);
+    const messagesQuery = query(messagesRef, orderBy("timestamp"));
+
+    // Display name of the logged-in user
+    let username = "CircleUp";
+
+    // Check if user is logged in and set display name
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Check if the display name exists, otherwise set a new one
+        if (user.displayName) {
+          username = user.displayName;
+        } else {
+          const displayName = prompt("Please enter your display name:");
+          if (displayName) {
+            updateProfile(user, { displayName }).then(() => {
+              username = displayName;
+            }).catch((error) => {
+              console.error("Error updating display name:", error);
+            });
+          }
+        }
+      }
+    });
+
+    // Real-time listener for chat messages
+    onSnapshot(messagesQuery, (snapshot) => {
+      chatMessages.innerHTML = "";
+      snapshot.forEach((doc) => {
+        const message = doc.data();
+        const messageElement = document.createElement("div");
+        messageElement.className = "chat-message";
+        messageElement.innerHTML = `<span class="user">${message.user}:</span> `;
+
+        if (message.type === "text") {
+          messageElement.innerHTML += message.text;
+        } else if (message.type === "media") {
+          if (message.mediaType === "image") {
+            messageElement.innerHTML += `<img src="${message.url}" alt="Image" />`;
+          } else if (message.mediaType === "video") {
+            messageElement.innerHTML += `<video src="${message.url}" controls></video>`;
+          }
+        }
+
+        chatMessages.appendChild(messageElement);
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+
+    // Send message event
+    messageForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const storageRef = ref(storage, `circles/${circleId}/${file.name}`);
+        await uploadBytes(storageRef, file);
+        const fileURL = await getDownloadURL(storageRef);
+
+        await addDoc(messagesRef, {
+          user: username,
+          url: fileURL,
+          mediaType: file.type.startsWith("image") ? "image" : "video",
+          type: "media",
+          timestamp: serverTimestamp()
+        });
+        fileInput.value = "";
+      } else if (messageInput.value.trim() !== "") {
+        await addDoc(messagesRef, {
+          user: username,
+          text: messageInput.value,
+          type: "text",
+          timestamp: serverTimestamp()
+        });
+        messageInput.value = "";
+      }
+    });
+
+    // Dropdown menu functionality
+    document.getElementById("settings-icon").addEventListener("click", () => {
+      const dropdown = document.getElementById("dropdown-menu");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+
+    // Add Member Button: Redirect to add_member_circle.html
+    document.getElementById("add-member").addEventListener("click", () => {
+      window.location.href = `add_member_circle.html?circleId=${circleId}`;
+    });
+
+    // Close dropdown if clicked outside
+    window.addEventListener("click", (event) => {
+      if (!event.target.matches('#settings-icon')) {
+        const dropdown = document.getElementById("dropdown-menu");
+        if (dropdown.style.display === "block") {
+          dropdown.style.display = "none";
+        }
+      }
+    });
+  </script>
+</body>
+</html>
