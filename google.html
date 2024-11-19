@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
+	<!-- Bootstrap theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<!-- Add icon library -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<title>Google Login?</title>
+</head>
+<body>
+
+<br>
+<div class="container">	
+  <div class="row">
+  	 <div class="col-sm-4">
+		<button type="button" id="google-login" name="google-login" class="btn btn-danger btn-lg btn-block"><i class="fa fa-google "></i> Login with Google</button>
+	</div><!-- end col -->	
+  </div><!--  end row -->		
+  </form>
+</div>
+<br>
+</body>
+	<script type="module">
+	  // Import the functions you need from the SDKs you need
+	  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-app.js";
+	  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-analytics.js";
+	  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-auth.js";
+	  // TODO: Add SDKs for Firebase products that you want to use
+	  // https://firebase.google.com/docs/web/setup#available-libraries
+
+	  // Your web app's Firebase configuration
+	  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+	  const firebaseConfig = {
+      apiKey: "AIzaSyDnR7U8nnWWOjMalysup_IMknnr0pG9KQI",
+      authDomain: "voxaabykaif.firebaseapp.com",
+      databaseURL: "https://voxaabykaif-default-rtdb.firebaseio.com",
+      projectId: "voxaabykaif",
+      storageBucket: "voxaabykaif.appspot.com",
+      messagingSenderId: "1038648133788",
+      appId: "1:1038648133788:web:a320cbed283c7e4d664559"
+    };
+	  // Initialize Firebase
+	  const app = initializeApp(firebaseConfig);
+	  const analytics = getAnalytics(app);
+	  const auth = getAuth();
+	  //console.log(auth);
+
+	  const provider = new GoogleAuthProvider();
+	  console.log(provider);
+	  
+	  //----- Google login code start	  
+	  document.getElementById("google-login").addEventListener("click", function() {
+		  signInWithPopup(auth, provider)
+		  .then((result) => {
+		    // This gives you a Google Access Token. You can use it to access the Google API.
+		    const credential = GoogleAuthProvider.credentialFromResult(result);
+		    const token = credential.accessToken;
+		    // The signed-in user info.
+		    const user = result.user;
+		    alert("Welcome "+user.displayName);
+		    console.log(user);
+		    // ...
+		  }).catch((error) => {
+		    // Handle Errors here.
+		    const errorCode = error.code;
+		    const errorMessage = error.message;
+		    console.log(errorMessage);
+		    // The email of the user's account used.
+		    const email = error.customData.email;
+		    // The AuthCredential type that was used.
+		    const credential = GoogleAuthProvider.credentialFromError(error);
+		    // ...
+		  });		  		  
+	  });
+	  //----- End
+	  
+	</script>
+</html>
