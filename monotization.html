@@ -9,113 +9,179 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
      crossorigin="anonymous"></script>
     <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+       /* ==== "Inter" FONT-FAMILY FROM FONTS.GOOGLE.COM  ==== */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap");
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-            padding-top: 60px;
-        }
+/* ==== ROOT RESET ==== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-        header {
-            background-color: #008080;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            font-size: 24px;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 100;
-        }
+/* ==== CSS VARIABLES ==== */
+:root {
+  --primary-color: #008080; /* Teal */
+  --secondary-color: #1E3A8A; /* Deep Blue */
+  --accent-color: #D4AF37; /* Soft Gold */
+  --bg-color: #f9f9f9; /* Background color */
+  --text-color: #333; /* Text color */
+  --font-size-body-text: clamp(14px, 1.6vw, 16px);
+  --h1-font-size: calc(var(--font-size-body-text) * 2.4);
+  --h2-font-size: calc(var(--h1-font-size) - 15px);
+  --h3-font-size: calc(var(--h2-font-size) - 8px);
+  --button-hover-color: #b89430;
+}
 
-        header h1 {
-            margin: 0;
-        }
+/* ==== RESET HTML ==== */
+body {
+  width: 100%;
+  height: 100vh;
+  overflow-x: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: var(--font-size-body-text);
+  line-height: 1.6;
+  padding: 20px;
+}
+ul li {
+  list-style-type: none;
+}
+a {
+  text-decoration: none;
+}
+button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
 
-        .content {
-            margin-top: 100px;
-            padding: 40px;
-        }
+/* ==== HEADER ==== */
+header {
+  background-image: url('images/getmonotize.jpg'); /* Add the path to your JPEG image */
+  background-size: cover; /* Ensures the image covers the entire header */
+  background-position: center; /* Centers the image within the header */
+  color: rgb(255, 255, 255);
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+header h1 {
+  font-size: var(--h1-font-size);
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Optional: adds shadow for better text visibility */
+}
 
-        .section {
-            margin-bottom: 40px;
-        }
+/* ==== CONTENT ==== */
+.content {
+  max-width: 800px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        .section h2 {
-            color: #1e3a8a;
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
+.section {
+  margin-bottom: 30px;
+}
 
-        .section p {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 20px;
-        }
+.section h2 {
+  font-size: var(--h2-font-size);
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+}
 
-        .cta-btn {
-            background-color: #008080;
-            color: white;
-            padding: 12px 30px;
-            font-size: 18px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            transition: background-color 0.3s;
-        }
+.section p {
+  margin-bottom: 15px;
+  line-height: 1.8;
+}
 
-        .cta-btn:hover {
-            background-color: #006f6f;
-        }
+.earnings {
+  background-color: #f0f8f8;
+  border-left: 4px solid var(--primary-color);
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
 
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 40px;
-        }
+.earnings h3 {
+  font-size: var(--h3-font-size);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
 
-        .comparison-table th, .comparison-table td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
+.earnings strong {
+  font-size: 1.5rem;
+  color: var(--accent-color);
+}
 
-        .comparison-table th {
-            background-color: #1e3a8a;
-            color: #fff;
-        }
+/* ==== TABLE STYLES ==== */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
 
-        .earnings {
-            background-color: #D4AF37;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
+.comparison-table th,
+.comparison-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
 
-        .earnings h3 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
+.comparison-table th {
+  background-color: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+}
 
-        .earnings p {
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
+.comparison-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
 
-        .earnings strong {
-            font-size: 24px;
-            color: #fff;
-        }
+/* ==== BUTTON STYLES ==== */
+.cta-btn {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.cta-btn:hover {
+  background-color: var(--button-hover-color);
+}
+
+/* ==== RESPONSIVE DESIGN ==== */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: calc(var(--font-size-body-text) * 2);
+  }
+
+  .section h2 {
+    font-size: calc(var(--h2-font-size) - 5px);
+  }
+
+  .cta-btn {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+  }
+}
+
     </style>
 </head>
 <body>
