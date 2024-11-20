@@ -1,58 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About - CircleUp</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <!-- External CSS -->
-  <link rel="stylesheet" href="styles/about.css">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
-  crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="About CircleUp - Connect, Share, and Grow Together">
+    <title>About Us - CircleUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and general styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #008080;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 400px;
+            background-color: #008080;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 18px;
+        }
+
+        .hero svg {
+            position: absolute;
+            bottom: -20px;
+            width: 100%;
+            height: auto;
+        }
+
+        /* About Container */
+        .about-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .about-header h1 {
+            font-size: 36px;
+            font-weight: 600;
+            color: #1E3A8A;
+        }
+
+        .about-header p {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* Team Section */
+        .team {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .team h2 {
+            font-size: 28px;
+            color: #008080;
+            margin-bottom: 20px;
+        }
+
+        .team-member {
+            width: 200px;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .team-member img {
+            width: 25%;
+            border-radius: 250%;
+            margin-bottom: 20px;
+        }
+
+        .team-member h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1E3A8A;
+        }
+
+        .team-member p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Mission Section */
+        .mission {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .mission h2 {
+            font-size: 28px;
+            color: #008080;
+            margin-bottom: 20px;
+        }
+
+        .mission p {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* About Image */
+        .about-image {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .about-image img {
+            width: 80%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: #008080;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 16px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .team-member {
+                width: 80%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
- 
-
-  <main class="about-section">
-    <section class="intro">
-      <h1>Welcome to CircleUp</h1>
-      <p>Your hub for meaningful connections, sharing memories, and creating circles that matter. CircleUp allows you to stay connected with friends and family in a safe, moderated environment where you can share your thoughts, ideas, and experiences in a way that matters to you.</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Welcome to CircleUp</h1>
+            <p>Your community to connect, share, and grow!</p>
+        </div>
+        <!-- SVG Image in Hero -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 180" fill="none" stroke="none">
+            <path fill="#008080" d="M0 0L1920 50L1920 180L0 180z"></path>
+        </svg>
     </section>
 
-    <section class="features">
-      <h2>Features of CircleUp</h2>
-      <div class="feature-item">
-        <h3>Create Circles</h3>
-        <p>Start and join circles with your friends, family, or like-minded individuals. Connect with those who share similar interests and create a community space that feels personal and safe.</p>
-      </div>
-      <div class="feature-item">
-        <h3>Share Memories</h3>
-        <p>Post memories, thoughts, or updates that last, in a community-driven space. Your memories are safe, organized, and available to revisit anytime you wish.</p>
-      </div>
-      <div class="feature-item">
-        <h3>Active Moderation</h3>
-        <p>Our active moderation system ensures a safe and friendly environment for all users. Enjoy peace of mind knowing that CircleUp is committed to maintaining a respectful space for everyone.</p>
-      </div>
-      <div class="feature-item">
-        <h3>Time-Locked Posts<br></h3>
-        <p>Set time-locked posts that can be shared at a specific moment in the future. Perfect for messages, memories, or surprises you want to deliver at the right time.</p>
-      </div>
+    <section class="about-container">
+        <div class="about-header">
+            <h1>About CircleUp</h1>
+            <p>We are a community-focused platform that connects people, allows them to share their passions, and grow together. Join us and experience a new way of socializing!</p>
+        </div>
+
+        <!-- About Image -->
+        <div class="about-image">
+            <img src="images/aboutus.svg" alt="About CircleUp">
+        </div>
+
+        <div class="team">
+            <h2>Meet Our Team</h2>
+            <div class="team-member">
+                <img src="images/kaifansari.png" alt="Kaif Ansari">
+                <h3>Kaif Ansari</h3>
+                <p>Founder & CEO</p>
+            </div>
+        </div>
+
+        <div class="mission">
+            <h2>Our Mission</h2>
+            <p>Our mission is to create a platform where users can create meaningful connections, collaborate on projects, and share ideas freely. CircleUp is all about building a positive online space that encourages engagement and growth.</p>
+        </div>
     </section>
 
-    <section class="developer">
-      <h2>About the Developer</h2>
-      <p>CircleUp is created by <strong>Kaif Ansari</strong>, a passionate developer dedicated to providing a platform that brings people together in meaningful ways. With a focus on community, safety, and user experience, Kaif strives to create products that genuinely enhance the way we connect and communicate.</p>
-      <p>If you have any questions, suggestions, or feedback, feel free to reach out through the <a href="contact.html">Contact</a> page.</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2024 CircleUp. All rights reserved.</p>
-    <p><a href="privacy-policy.html">Privacy Policy</a></p>
-  </footer> 
-  
+    <footer>
+        <p>&copy; 2024 CircleUp. All Rights Reserved.</p>
+    </footer>
 </body>
 </html>
