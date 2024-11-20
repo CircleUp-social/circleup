@@ -1,81 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CircleUp - Connect with Your Circles</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to CircleUp</title>
+<link rel="icon" type="image/png" href="favicon.png">
 
+    <!-- ==== STYLE.CSS ==== -->
+    <link rel="stylesheet" href="styles/index.css" />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- ====  REMIXICON CDN ==== -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
 
-  <!-- External CSS -->
-  <link rel="stylesheet" href="styles/index.css">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8422673241171892"
-     crossorigin="anonymous"></script>
-</head>
-<body>
+    <!-- ==== ANIMATE ON SCROLL CSS CDN  ==== -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- ==== HEADER ==== -->
+    <header class="container header">
+      <!-- ==== NAVBAR ==== -->
+      <nav class="nav">
+        <div class="logo">
+          <h2>CircleUp.</h2>
+        </div>
 
-  <header>
-    <nav class="navbar">
-      <div class="logo">CircleUp</div>
-      <div class="nav-links">
-        <a href="login.html" class="nav-button">Login</a>
-        <a href="signup.html" class="nav-button">Sign Up</a>
-        <a href="about.html" class="nav-button">About</a>
+        <div class="nav_menu" id="nav_menu">
+          <button class="close_btn" id="close_btn">
+            <i class="ri-close-fill"></i>
+          </button>
+
+          <ul class="nav_menu_list">
+            <li class="nav_menu_item">
+              <a href="signup.html" class="nav_menu_link">SignUp</a>
+            </li>
+            <li class="nav_menu_item">
+              <a href="login.html" class="nav_menu_link">Login</a>
+            </li>
+            <li class="nav_menu_item">
+              <a href="#" class="nav_menu_link">About</a>
+            </li>
+            <li class="nav_menu_item">
+              <a href="monotization.html" class="nav_menu_link">Blog</a>
+            </li>
+          </ul>
+        </div>
+
+        <button class="toggle_btn" id="toggle_btn">
+          <i class="ri-menu-line"></i>
+        </button>
+      </nav>
+    </header>
+
+    <section class="wrapper">
+      <div class="container">
+        <div class="grid-cols-2">
+          <div class="grid-item-1">
+            <h1 class="main-heading">
+              Welcome to <span>CircleUp.</span></h1>
+            <p class="info-text">
+              Join your favorite Circles, share memories, and connect in new ways.<br>
+              Earn money by monotization feature and paid every months. 
+            </p>
+
+            <div class="btn_wrapper">
+              <!-- Link for "View all pages" button -->
+              <a href="signup.html">
+                <button class="btn view_more_btn">
+                  Get Started <i class="ri-arrow-right-line"></i>
+                </button>
+              </a>
+
+              <a href="Login.html">
+                <button class="btn documentation_btn">Login</button>
+              </a>
+              
+            </div>
+          </div>
+          <div class="grid-item-2">
+            <div class="team_img_wrapper">
+              <img src="images/team.svg" alt="team-img" />
+            </div>
+          </div>
+        </div>
       </div>
-    </nav>
-  </header>
+    </section>
 
-  <main class="main-section">
-    <div class="content">
-      <h1>Welcome to CircleUp</h1>
-      <p>Join your favorite Circles, share memories, and connect in new ways.</p>
-      <a href="signup.html" class="cta-button">Get Started</a>
-      <a href="blog.html" class="cta-button">Go to Blog</a>
-      <a href="monotization.html" class="cta-button">start Earning Now</a>
-    </div>
-    <div class="hero-image">
-      <img src="images/logo.png" alt="CircleUp Community">
-    </div>
-  </main>
-  <!-- Message Box -->
-<div id="messageBox" class="message-box">
-  <p>
-    By clicking **Continue**, you agree to our 
-    <a href="terms.html" target="_blank">Terms & Conditions</a> 
-    and 
-    <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.
-  </p>
-  <button id="continueBtn">Continue</button>
-</div>
+    <section class="wrapper">
+      <div class="container" data-aos="fade-up" data-aos-duration="1000">
+        <div class="grid-cols-3">
+          <div class="grid-col-item">
+            <div class="icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <div class="featured_info">
+              <span class="title">Built for Developers</span>
+              <p>
+                A powerful platform designed with the needs of developers in mind.
+              </p>
+            </div>
+          </div>
+          <div class="grid-col-item">
+            <div class="icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <div class="featured_info">
+              <span class="title">Designed for Modern Needs</span>
+              <p>
+                A sleek and modern design to enhance your experience on the platform.
+              </p>
+            </div>
+          </div>
 
+          <div class="grid-col-item">
+            <div class="icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+            </div>
+            <div class="featured_info">
+              <span class="title">Documentation for Everything</span>
+              <p>
+                Comprehensive guides and tutorials to help you get started and master CircleUp.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+  </div>
 
-  <footer>
-    <p>&copy; 2024 CircleUp. All rights reserved.</p>
-    <p><a href="privacy-policy.html">Privacy Policy</a></p>
-    <p><a href="terms.html">Terms of Service</a></p>
-  </footer>
+    <footer>
+      <div class="container footer">
+        <div class="footer-content">
+          <p>&copy; 2024 CircleUp. All rights reserved.</p>
+          <ul class="footer-links">
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
 
-  <!-- Assistant Icon outside of the footer -->
- 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-  const messageBox = document.getElementById("messageBox");
-  const continueBtn = document.getElementById("continueBtn");
-
-  // Show the message box on page load with a slight delay
-  setTimeout(() => {
-    messageBox.classList.add("visible"); // Add visible class for animation
-  }, 500);
-
-  // Handle the Continue button click
-  continueBtn.addEventListener("click", () => {
-    messageBox.classList.remove("visible"); // Remove visible class to hide
-  });
-});
-
-  </script>
-</body>
+    <!-- ==== ANIMATE ON SCROLL JS CDN -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- ==== GSAP CDN ==== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
+    <!-- ==== SCRIPT.JS ==== -->
+    <script src="js/updatedindex.js" defer></script>
+  </body>
 </html>
