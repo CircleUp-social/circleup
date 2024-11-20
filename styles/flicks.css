@@ -37,6 +37,8 @@ body {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     position: relative;
     overflow: hidden;
+    margin-left: auto; /* Center post horizontally */
+    margin-right: auto; /* Center post horizontally */
 }
 
 /* Hover Effect for Post */
@@ -189,6 +191,8 @@ input[type="text"]:focus {
 
     .post {
         padding: 18px;
+        max-width: 100%; /* Allow post to take up full width */
+        box-sizing: border-box;
     }
 
     .post h3 {
