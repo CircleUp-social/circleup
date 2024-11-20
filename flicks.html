@@ -8,9 +8,16 @@
     </head>
     <body>
         <div id="app">
+            <!-- Search bar for filtering videos -->
+            <div id="search-container">
+                <input type="text" id="search-bar" placeholder="Search videos..." oninput="searchVideos()">
+            </div>
+
             <div id="postContainer"></div>
         </div>
         <div id="verified-icon-{userId}"></div>
+
         <script type="module" src="js/flicks.js"></script> 
+        <script type="module" src="js/media.js"></script> 
     </body>
 </html>
